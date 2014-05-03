@@ -1,0 +1,25 @@
+---
+- name: set sshrc to /etc/ssh/sshrc
+  template: src=sshrc 
+            dest=/etc/ssh/sshrc
+            owner=root
+            group=root
+            mode=0644
+
+- name: create directory of run command scripts
+  file: state=directory
+        path=/etc/ssh/rc.d/
+        mode=0755
+        owner=root
+        group=root
+
+- name: copy scripts
+  template: src={{ item }}.sh
+            dest=/etc/ssh/rc.d/{{ item }}.sh 
+  with_items:
+    - notify_to_idobata
+
+- name: add mode of execute to scripts
+  command: chmod +x /etc/ssh/rc.d/{{ item }}.sh
+  with_items:
+    - notify_to_idobata
